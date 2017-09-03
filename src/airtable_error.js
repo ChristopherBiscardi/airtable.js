@@ -1,14 +1,10 @@
-"use strict";
-
-var Class = require("./class");
-
-var AirtableError = Class.extend({
-  init: function(error, message, statusCode) {
+export default class AirtableError {
+  constructor(error, message, statusCode) {
     this.error = error;
     this.message = message;
     this.statusCode = statusCode;
-  },
-  toString: function() {
+  }
+  toString() {
     return [
       this.message,
       "(",
@@ -17,6 +13,4 @@ var AirtableError = Class.extend({
       this.statusCode ? "[Http code " + this.statusCode + "]" : ""
     ].join("");
   }
-});
-
-module.exports = AirtableError;
+}
