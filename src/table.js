@@ -7,7 +7,6 @@ var async = require("async");
 
 var AirtableError = require("./airtable_error");
 var Class = require("./class");
-var deprecate = require("./deprecate");
 var Query = require("./query");
 var Record = require("./record");
 var callbackToPromise = require("./callback_to_promise");
@@ -26,18 +25,6 @@ var Table = Class.extend({
     this.update = callbackToPromise(this._updateRecord, this);
     this.destroy = callbackToPromise(this._destroyRecord, this);
     this.replace = callbackToPromise(this._replaceRecord, this);
-
-    // Deprecated API
-    this.list = deprecate(
-      this._listRecords.bind(this),
-      "table.list",
-      "Airtable: `list()` is deprecated. Use `select()` instead."
-    );
-    this.forEach = deprecate(
-      this._forEachRecord.bind(this),
-      "table.forEach",
-      "Airtable: `forEach()` is deprecated. Use `select()` instead."
-    );
   },
   _findRecordById: function(recordId, done) {
     var record = new Record(this, recordId);
@@ -134,71 +121,6 @@ var Table = Class.extend({
   _destroyRecord: function(recordId, done) {
     var record = new Record(this, recordId);
     record.destroy(done);
-  },
-  _listRecords: function(limit, offset, opts, done) {
-    var that = this;
-
-    if (!done) {
-      done = opts;
-      opts = {};
-    }
-    var listRecordsParameters = _.extend(
-      {
-        limit: limit,
-        offset: offset
-      },
-      opts
-    );
-
-    async.waterfall(
-      [
-        function(next) {
-          that._base.runAction(
-            "get",
-            "/" + that._urlEncodedNameOrId() + "/",
-            listRecordsParameters,
-            null,
-            next
-          );
-        },
-        function(response, results, next) {
-          var records = _.map(results.records, function(recordJson) {
-            return new Record(that, null, recordJson);
-          });
-          next(null, records, results.offset);
-        }
-      ],
-      done
-    );
-  },
-  _forEachRecord: function(opts, callback, done) {
-    if (arguments.length === 2) {
-      done = callback;
-      callback = opts;
-      opts = {};
-    }
-    var that = this;
-    var limit = Table.__recordsPerPageForIteration || 100;
-    var offset = null;
-
-    var nextPage = function() {
-      that._listRecords(limit, offset, opts, function(err, page, newOffset) {
-        if (err) {
-          done(err);
-          return;
-        }
-
-        _.each(page, callback);
-
-        if (newOffset) {
-          offset = newOffset;
-          nextPage();
-        } else {
-          done();
-        }
-      });
-    };
-    nextPage();
   }
 });
 
