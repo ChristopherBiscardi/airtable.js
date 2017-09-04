@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`record new Record(table, recordId, recordJson) case: 1 1`] = `
+Record {
+  "_rawJson": Object {},
+  "_table": Object {},
+  "destroy": [Function],
+  "fetch": [Function],
+  "fields": Object {},
+  "id": 5,
+  "patchUpdate": [Function],
+  "putUpdate": [Function],
+  "replaceFields": [Function],
+  "save": [Function],
+  "updateFields": [Function],
+}
+`;

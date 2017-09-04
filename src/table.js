@@ -5,7 +5,7 @@ var _ = require("lodash");
 var assert = require("assert");
 var async = require("async");
 
-var AirtableError = require("./airtable_error");
+import AirtableError from "./airtable_error";
 var Class = require("./class");
 var Query = require("./query");
 var Record = require("./record");

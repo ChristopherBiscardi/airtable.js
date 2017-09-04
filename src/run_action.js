@@ -1,12 +1,17 @@
-"use strict";
-
-var internalConfig = require("./internal_config");
-var objectToQueryParamString = require("./object_to_query_param_string");
+import internalConfig from "./internal_config";
+import objectToQueryParamString from "./object_to_query_param_string";
 
 // This will become require('xhr') in the browser.
-var request = require("request");
+import request from "request";
 
-function runAction(base, method, path, queryParams, bodyData, callback) {
+export default function runAction(
+  base,
+  method,
+  path,
+  queryParams,
+  bodyData,
+  callback
+) {
   var url =
     base._airtable._endpointUrl +
     "/v" +
@@ -37,14 +42,14 @@ function runAction(base, method, path, queryParams, bodyData, callback) {
     options.body = bodyData;
   }
 
-  request(options, function(error, resp, body) {
+  request(options, (error, resp, body) => {
     if (error) {
       callback(error, resp, body);
       return;
     }
 
     if (resp.statusCode === 429 && !base._airtable._noRetryIfRateLimited) {
-      setTimeout(function() {
+      setTimeout(() => {
         runAction(base, method, path, queryParams, bodyData, callback);
       }, internalConfig.RETRY_DELAY_IF_RATE_LIMITED);
       return;
@@ -54,5 +59,3 @@ function runAction(base, method, path, queryParams, bodyData, callback) {
     callback(error, resp, body);
   });
 }
-
-module.exports = runAction;

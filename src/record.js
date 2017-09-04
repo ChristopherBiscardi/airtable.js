@@ -1,12 +1,7 @@
-"use strict";
-
-var _ = require("lodash");
-
-var Class = require("./class");
 var callbackToPromise = require("./callback_to_promise");
 
-var Record = Class.extend({
-  init: function(table, recordId, recordJson) {
+export default class Record {
+  constructor(table, recordId, recordJson) {
     this._table = table;
     this.id = recordId || recordJson.id;
     this.setRawJson(recordJson);
@@ -19,31 +14,29 @@ var Record = Class.extend({
 
     this.updateFields = this.patchUpdate;
     this.replaceFields = this.putUpdate;
-  },
-  getId: function() {
+  }
+  getId() {
     return this.id;
-  },
-  get: function(columnName) {
+  }
+  get(columnName) {
     return this.fields[columnName];
-  },
-  set: function(columnName, columnValue) {
+  }
+  set(columnName, columnValue) {
     this.fields[columnName] = columnValue;
-  },
-  save: function(done) {
+  }
+  save(done) {
     this.putUpdate(this.fields, done);
-  },
-  patchUpdate: function(cellValuesByName, opts, done) {
+  }
+  patchUpdate(cellValuesByName, opts, done) {
     var that = this;
     if (!done) {
       done = opts;
       opts = {};
     }
-    var updateBody = _.extend(
-      {
-        fields: cellValuesByName
-      },
-      opts
-    );
+    var updateBody = {
+      fields: cellValuesByName,
+      ...opts
+    };
 
     this._table._base.runAction(
       "patch",
@@ -60,19 +53,17 @@ var Record = Class.extend({
         done(null, that);
       }
     );
-  },
-  putUpdate: function(cellValuesByName, opts, done) {
+  }
+  putUpdate(cellValuesByName, opts, done) {
     var that = this;
     if (!done) {
       done = opts;
       opts = {};
     }
-    var updateBody = _.extend(
-      {
-        fields: cellValuesByName
-      },
-      opts
-    );
+    var updateBody = {
+      fields: cellValuesByName,
+      ...opts
+    };
     this._table._base.runAction(
       "put",
       "/" + this._table._urlEncodedNameOrId() + "/" + this.id,
@@ -88,8 +79,8 @@ var Record = Class.extend({
         done(null, that);
       }
     );
-  },
-  destroy: function(done) {
+  }
+  destroy(done) {
     var that = this;
     this._table._base.runAction(
       "delete",
@@ -105,9 +96,9 @@ var Record = Class.extend({
         done(null, that);
       }
     );
-  },
+  }
 
-  fetch: function(done) {
+  fetch(done) {
     var that = this;
     this._table._base.runAction(
       "get",
@@ -124,11 +115,9 @@ var Record = Class.extend({
         done(null, that);
       }
     );
-  },
-  setRawJson: function(rawJson) {
+  }
+  setRawJson(rawJson) {
     this._rawJson = rawJson;
     this.fields = (this._rawJson && this._rawJson.fields) || {};
   }
-});
-
-module.exports = Record;
+}
