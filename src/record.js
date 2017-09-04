@@ -28,7 +28,6 @@ export default class Record {
     this.putUpdate(this.fields, done);
   }
   patchUpdate(cellValuesByName, opts, done) {
-    var that = this;
     if (!done) {
       done = opts;
       opts = {};
@@ -43,76 +42,72 @@ export default class Record {
       "/" + this._table._urlEncodedNameOrId() + "/" + this.id,
       {},
       updateBody,
-      function(err, response, results) {
+      (err, response, results) => {
         if (err) {
           done(err);
           return;
         }
 
-        that.setRawJson(results);
-        done(null, that);
+        this.setRawJson(results);
+        done(null, this);
       }
     );
   }
   putUpdate(cellValuesByName, opts, done) {
-    var that = this;
     if (!done) {
       done = opts;
       opts = {};
     }
-    var updateBody = {
-      fields: cellValuesByName,
-      ...opts
-    };
     this._table._base.runAction(
       "put",
       "/" + this._table._urlEncodedNameOrId() + "/" + this.id,
       {},
-      updateBody,
-      function(err, response, results) {
+      {
+        fields: cellValuesByName,
+        ...opts
+      },
+      (err, response, results) => {
         if (err) {
           done(err);
           return;
         }
 
-        that.setRawJson(results);
-        done(null, that);
+        this.setRawJson(results);
+        done(null, this);
       }
     );
   }
   destroy(done) {
-    var that = this;
     this._table._base.runAction(
       "delete",
       "/" + this._table._urlEncodedNameOrId() + "/" + this.id,
       {},
       null,
-      function(err, response, results) {
+      (err, response, results) => {
         if (err) {
           done(err);
           return;
         }
 
-        done(null, that);
+        done(null, this);
       }
     );
   }
 
   fetch(done) {
-    var that = this;
     this._table._base.runAction(
       "get",
       "/" + this._table._urlEncodedNameOrId() + "/" + this.id,
       {},
       null,
-      function(err, response, results) {
+      (err, response, results) => {
         if (err) {
           done(err);
           return;
         }
 
-        that.setRawJson(results);
-        done(null, that);
+        this.setRawJson(results);
+        done(null, this);
       }
     );
   }

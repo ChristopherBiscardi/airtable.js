@@ -3,7 +3,7 @@
 var _ = require("lodash");
 var internalConfig = require("./internal_config");
 var Class = require("./class");
-var AirtableError = require("./airtable_error");
+import AirtableError from "./airtable_error";
 var Table = require("./table");
 var runAction = require("./run_action");
 
