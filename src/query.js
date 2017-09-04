@@ -3,7 +3,7 @@
 var assert = require("assert");
 var _ = require("lodash");
 
-var check = require("./typecheck");
+import check, { isArrayOf } from "./typecheck";
 var Class = require("./class");
 var Record = require("./record");
 var callbackToPromise = require("./callback_to_promise");
@@ -136,7 +136,7 @@ var Query = Class.extend({
 
 Query.paramValidators = {
   fields: check(
-    check.isArrayOf(_.isString),
+    isArrayOf(_.isString),
     "the value for `fields` should be an array of strings"
   ),
 
@@ -153,7 +153,7 @@ Query.paramValidators = {
   pageSize: check(_.isNumber, "the value for `pageSize` should be a number"),
 
   sort: check(
-    check.isArrayOf(function(obj) {
+    isArrayOf(function(obj) {
       return (
         _.isPlainObject(obj) &&
         _.isString(obj.field) &&
